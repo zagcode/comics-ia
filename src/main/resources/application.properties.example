@@ -2,7 +2,9 @@
 # O application.properties fica fora do git porque guarda configuracoes locais e o token da Superhero API.
 
 quarkus.langchain4j.timeout=120s
+# os dois modelos abaixo sao os que o compose.yaml baixa no container do Ollama
 quarkus.langchain4j.ollama.chat-model.model-name=nemotron-3-nano:30b-cloud
+quarkus.langchain4j.ollama.embedding-model.model-name=nomic-embed-text
 quarkus.langchain4j.ollama.chat-model.temperature=0
 # com o raciocinio desligado o nemotron fica ~2x mais rapido, mas deixa de recusar assuntos fora de HQ e de chamar a ferramenta
 quarkus.langchain4j.ollama.chat-model.model-options.think=true
@@ -23,6 +25,8 @@ quarkus.langchain4j.log-responses=true
 langchain4j-ollama-dev-service.ollama.host=127.0.0.1
 langchain4j-ollama-dev-service.ollama.port=11434
 langchain4j-ollama-dev-service.ollama.endpoint=http://${langchain4j-ollama-dev-service.ollama.host}:${langchain4j-ollama-dev-service.ollama.port}
+# se o Ollama estiver em outra porta (ex.: OLLAMA_PORT=11435 no compose.yaml), descomente e ajuste
+# quarkus.langchain4j.ollama.base-url=http://localhost:11435
 # se o Quarkus nao subir por falha de rede do Ollama ao pre-carregar o modelo, descomente
 # quarkus.langchain4j.devservices.preload=false
 

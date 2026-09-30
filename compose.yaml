@@ -1,0 +1,30 @@
+# Ollama com os modelos do comics-ia (embedding e chat).
+#
+#   docker compose up -d --build
+#   docker compose exec ollama ollama signin   # uma vez: modelos -cloud rodam nos servidores do Ollama
+#
+# Modelos e login ficam no volume ollama-data, entao a segunda subida nao baixa nada.
+# Se a porta 11434 ja estiver em uso, suba com OLLAMA_PORT=11435 e ajuste o endereco no application.properties.
+services:
+  ollama:
+    build: docker/ollama
+    image: comics-ia-ollama
+    ports:
+      - "${OLLAMA_PORT:-11434}:11434"
+    environment:
+      # mesmos modelos do application.properties
+      PULL_MODELS: "${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text} ${OLLAMA_CHAT_MODEL:-nemotron-3-nano:30b-cloud}"
+    volumes:
+      - ollama-data:/root/.ollama
+    restart: unless-stopped
+    # Com GPU NVIDIA (so faz diferenca para modelos locais; os -cloud rodam fora da maquina):
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+
+volumes:
+  ollama-data:

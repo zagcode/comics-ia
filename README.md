@@ -15,8 +15,44 @@ Chatbot especialista em histórias em quadrinhos. Você pergunta sobre personage
 ## Requisitos
 
 - JDK 21
-- [Ollama](https://ollama.com) rodando em `127.0.0.1:11434`
+- [Ollama](https://ollama.com) rodando em `127.0.0.1:11434`, instalado na máquina ou pelo Docker (veja [Ollama com Docker](#ollama-com-docker)).
 - Acesso ao modelo `nemotron-3-nano:30b-cloud`. Modelos com sufixo `-cloud` rodam nos servidores do Ollama e pedem login com `ollama signin`. Para rodar tudo na sua máquina, troque `quarkus.langchain4j.ollama.chat-model.model-name` no `application.properties` por um modelo baixado com `ollama pull`.
+
+## Ollama com Docker
+
+O `compose.yaml` sobe um Ollama com os dois modelos que o projeto usa: `nomic-embed-text`, que gera os embeddings do RAG, e `nemotron-3-nano:30b-cloud`, que responde às perguntas. O container baixa os modelos na primeira subida e os guarda no volume `ollama-data`, junto com o login, então as subidas seguintes não baixam nada.
+
+```shell
+docker compose up -d --build
+docker compose exec ollama ollama signin
+```
+
+O `signin` só precisa ser feito uma vez. Ele mostra um link; abra no navegador para ligar o container à sua conta do ollama.com. Sem login, o modelo `-cloud` responde `Unauthorized`. O embedding roda no próprio container e funciona sem login.
+
+Para acompanhar os downloads, use `docker compose logs -f ollama`.
+
+O `compose.yaml` aceita estas variáveis:
+
+| Variável | Padrão | Uso |
+|---|---|---|
+| `OLLAMA_PORT` | `11434` | porta do Ollama no host |
+| `OLLAMA_EMBEDDING_MODEL` | `nomic-embed-text` | modelo de embedding |
+| `OLLAMA_CHAT_MODEL` | `nemotron-3-nano:30b-cloud` | modelo de chat |
+
+Se trocar um modelo, troque também `quarkus.langchain4j.ollama.embedding-model.model-name` ou `quarkus.langchain4j.ollama.chat-model.model-name` no `application.properties`.
+
+Se a porta 11434 já estiver ocupada por outro Ollama, suba o container em outra porta e aponte o Quarkus para ela:
+
+```shell
+OLLAMA_PORT=11435 docker compose up -d --build          # bash
+$env:OLLAMA_PORT=11435; docker compose up -d --build    # PowerShell
+```
+
+```properties
+quarkus.langchain4j.ollama.base-url=http://localhost:11435
+```
+
+A imagem tem cerca de 9 GB, quase tudo da imagem oficial `ollama/ollama` e das bibliotecas de GPU que vêm nela. O bloco de GPU do `compose.yaml` está comentado porque só faz diferença para modelos locais; o `-cloud` roda nos servidores do Ollama.
 
 ## Rodando
 
