@@ -43,3 +43,9 @@ nb-configuration.xml
 /.quarkus/cli/plugins/
 # TLS Certificates
 .certs/
+
+# Fichas de personagens salvas em tempo de execucao
+data/
+
+# Configuracao local (token e ajustes da maquina); o modelo versionado e o application.properties.example
+src/main/resources/application.properties

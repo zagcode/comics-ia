@@ -4,6 +4,7 @@ import jakarta.ws.rs.core.MediaType;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -13,11 +14,14 @@ import jakarta.ws.rs.Produces;
 @Produces (MediaType.TEXT_PLAIN)
 public class comicsResource {
 
-    @Inject 
+    @Inject
     comicAssistant comicAssistant;
 
-    @POST 
-    public String chat(String userMessage) {
-        return comicAssistant.chat(userMessage);
+    @Inject
+    Conversations conversations;
+
+    @POST
+    public String chat(@HeaderParam ("X-Conversation-Id") String conversationId, String userMessage) {
+        return comicAssistant.chat(conversations.touch(conversationId), userMessage);
     }
 }

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Comics IA</title>
+    <meta name="description" content="Pergunte sobre heróis, vilões, autores e editoras de quadrinhos.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="page">
+        <header class="masthead">
+            <div class="masthead__title">
+                <h1 class="logo">Comics<span class="logo__dash">-</span>IA</h1>
+                <p class="tagline">Pergunte sobre heróis, vilões, autores e editoras.</p>
+            </div>
+            <aside class="cornerbox" aria-label="Edição">
+                <span class="visually-hidden">Número 1</span>
+                <span class="cornerbox__issue" aria-hidden="true">N<span class="cornerbox__ordinal">o</span>1</span>
+            </aside>
+        </header>
+
+        <section class="thread" id="thread" aria-live="polite" aria-label="Conversa">
+            <article class="panel panel--intro">
+                <p class="caption">Numa biblioteca repleta de gibis, alguém quer saber…</p>
+                <div class="suggestions">
+                    <button type="button" class="suggestion">Quem criou o Homem-Aranha?</button>
+                    <button type="button" class="suggestion">Qual o nome verdadeiro do Lanterna Verde?</button>
+                    <button type="button" class="suggestion">Quais são os poderes da Tempestade?</button>
+                </div>
+            </article>
+        </section>
+
+        <form class="composer" id="composer">
+            <label class="visually-hidden" for="question">Sua pergunta</label>
+            <div class="composer__balloon">
+                <textarea id="question" name="question" rows="2" maxlength="1000"
+                          placeholder="Escreva sua pergunta sobre quadrinhos" required></textarea>
+            </div>
+            <button type="submit" class="burst" id="send">
+                <span class="burst__shape" aria-hidden="true"></span>
+                <span class="burst__label">Perguntar</span>
+            </button>
+        </form>
+        <p class="hint">Enter envia. Shift + Enter quebra a linha.</p>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+# Copie este arquivo para application.properties e ajuste os valores.
+# O application.properties fica fora do git porque guarda configuracoes locais e o token da Superhero API.
+
+quarkus.langchain4j.timeout=120s
+quarkus.langchain4j.ollama.chat-model.model-name=nemotron-3-nano:30b-cloud
+quarkus.langchain4j.ollama.chat-model.temperature=0
+# com o raciocinio desligado o nemotron fica ~2x mais rapido, mas deixa de recusar assuntos fora de HQ e de chamar a ferramenta
+quarkus.langchain4j.ollama.chat-model.model-options.think=true
+quarkus.langchain4j.easy-rag.path=src/main/resources/rag
+# a ingestao fica com o RagIndexer: na subida e a cada comics.rag.reindex-every, junto com as fichas de comics.herois.path
+quarkus.langchain4j.easy-rag.ingestion-strategy=off
+# trechos abaixo desse score nao entram no prompt (nomic-embed-text: relevantes >= 0.83, irrelevantes <= 0.79)
+quarkus.langchain4j.easy-rag.min-score=0.81
+comics.herois.path=data/herois
+comics.rag.reindex-every=1h
+# memoria por conversa (id enviado pelo frontend): perguntas com ferramenta ocupam 4 mensagens cada
+quarkus.langchain4j.chat-memory.memory-window.max-messages=20
+# conversas paradas ha mais tempo que isso tem a memoria apagada
+comics.conversation.idle-timeout=30m
+quarkus.langchain4j.log-requests=true
+quarkus.langchain4j.log-responses=true
+langchain4j-ollama-dev-service.ollama.host=127.0.0.1
+langchain4j-ollama-dev-service.ollama.port=11434
+langchain4j-ollama-dev-service.ollama.endpoint=http://${langchain4j-ollama-dev-service.ollama.host}:${langchain4j-ollama-dev-service.ollama.port}
+# se o Quarkus nao subir por falha de rede do Ollama ao pre-carregar o modelo, descomente
+# quarkus.langchain4j.devservices.preload=false
+
+quarkus.rest-client.superhero-api.url=https://www.superheroapi.com/api.php
+quarkus.rest-client.superhero-api.follow-redirects=true
+# token gerado em https://superheroapi.com; tambem pode vir da variavel de ambiente SUPERHERO_API_TOKEN
+superhero-api.token=${SUPERHERO_API_TOKEN:seu-token-aqui}
+
+# porta do modo dev, se a 8080 estiver ocupada na sua maquina
+# dev.quarkus.http.port=8081
