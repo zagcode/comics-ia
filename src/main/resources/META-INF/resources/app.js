@@ -91,15 +91,55 @@ function element(tag, className) {
 
 // Small Markdown subset (paragraphs, lists, bold, italic), escaped first.
 function render(text) {
-    const blocks = escapeHtml(text.trim()).split(/\n\s*\n/);
-    return blocks.map((block) => {
-        const lines = block.split("\n").map((line) => line.trim()).filter(Boolean);
-        if (lines.length && lines.every((line) => /^([-*•]|\d+\.)\s+/.test(line))) {
-            const items = lines.map((line) => `<li>${inline(line.replace(/^([-*•]|\d+\.)\s+/, ""))}</li>`);
-            return `<ul>${items.join("")}</ul>`;
+    return escapeHtml(text.trim()).split(/\n\s*\n/).map(renderBlock).join("");
+}
+
+// A block can mix plain lines (a heading like "**Dados físicos**") with list items;
+// an indented item becomes a sublist of the item above it.
+function renderBlock(block) {
+    const html = [];
+    let paragraph = [];
+    let depth = 0;
+
+    const flushParagraph = () => {
+        if (paragraph.length) {
+            html.push(`<p>${paragraph.join("<br>")}</p>`);
+            paragraph = [];
         }
-        return `<p>${lines.map((line) => inline(line.replace(/^#+\s*/, ""))).join("<br>")}</p>`;
-    }).join("");
+    };
+    const closeLists = (to) => {
+        while (depth > to) {
+            html.push("</li></ul>");
+            depth--;
+        }
+    };
+
+    for (const line of block.split("\n")) {
+        if (!line.trim()) {
+            continue;
+        }
+        const item = line.match(/^(\s*)(?:[-*•]|\d+\.)\s(.*)$/);
+        if (!item) {
+            closeLists(0);
+            paragraph.push(inline(line.trim().replace(/^#+\s*/, "")));
+            continue;
+        }
+        flushParagraph();
+        const level = item[1].length >= 2 ? 2 : 1;
+        if (depth < level) {
+            while (depth < level) {
+                html.push("<ul><li>");
+                depth++;
+            }
+        } else {
+            closeLists(level);
+            html.push("</li><li>");
+        }
+        html.push(inline(item[2].trim()));
+    }
+    closeLists(0);
+    flushParagraph();
+    return html.join("");
 }
 
 function inline(text) {

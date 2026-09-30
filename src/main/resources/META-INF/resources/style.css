@@ -239,14 +239,23 @@ body {
 }
 
 .balloon p + p,
-.balloon p + ul,
-.balloon ul + p {
+.balloon ul + p,
+.balloon ul + ul {
     margin-top: 0.6em;
+}
+
+.balloon p + ul {
+    margin-top: 0.2em;
 }
 
 .balloon ul {
     margin: 0;
     padding-left: 1.2em;
+}
+
+.balloon li ul {
+    margin-top: 0.1em;
+    list-style-type: circle;
 }
 
 .balloon strong {

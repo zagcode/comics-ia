@@ -6,7 +6,7 @@ import dev.langchain4j.service.UserMessage;
 import io.quarkiverse.langchain4j.RegisterAiService;
 import jakarta.enterprise.context.ApplicationScoped;
 
-@RegisterAiService (tools = SuperHeroTools.class)
+@RegisterAiService (tools = SuperHeroTools.class, retrievalAugmentor = ComicsRetrievalAugmentor.class)
 @ApplicationScoped 
 public interface comicAssistant {
 

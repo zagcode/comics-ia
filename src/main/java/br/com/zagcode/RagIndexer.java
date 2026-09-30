@@ -3,7 +3,6 @@ package br.com.zagcode;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -25,9 +24,10 @@ import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
- * Monta o indice do RAG com os documentos de quarkus.langchain4j.easy-rag.path e as fichas salvas
- * pelo {@link HeroArchive}. Roda na subida e a cada comics.rag.reindex-every, e so reembeda se algum
- * arquivo mudou. O indice novo entra antes de o antigo sair, entao as perguntas nunca ficam sem RAG.
+ * Monta o indice de embeddings com os documentos de quarkus.langchain4j.easy-rag.path. Roda na subida e a cada
+ * comics.rag.reindex-every, e so reembeda se algum arquivo mudou. O indice novo entra antes de o antigo sair,
+ * entao as perguntas nunca ficam sem RAG. As fichas de personagens ficam fora: entram pelo nome, no
+ * {@link ComicsRetrievalAugmentor}.
  */
 @ApplicationScoped
 public class RagIndexer {
@@ -40,9 +40,6 @@ public class RagIndexer {
 
     @ConfigProperty (name = "quarkus.langchain4j.easy-rag.path")
     Path documentsPath;
-
-    @ConfigProperty (name = "comics.herois.path")
-    Path heroesPath;
 
     @ConfigProperty (name = "quarkus.langchain4j.easy-rag.max-segment-size", defaultValue = "300")
     int maxSegmentSize;
@@ -61,16 +58,14 @@ public class RagIndexer {
                 concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
     synchronized void reindex() {
         try {
-            List<Path> files = new ArrayList<>(listFiles(documentsPath));
-            files.addAll(listFiles(heroesPath));
+            List<Path> files = listFiles(documentsPath);
             String fingerprint = fingerprint(files);
             if (fingerprint.equals(indexedFingerprint)) {
                 Log.debug("RAG sem mudancas desde a ultima indexacao");
                 return;
             }
 
-            List<Document> documents = new ArrayList<>(load(documentsPath));
-            documents.addAll(load(heroesPath));
+            List<Document> documents = load(documentsPath);
             List<TextSegment> segments = DocumentSplitters
                     .recursive(maxSegmentSize, maxOverlapSize, new HuggingFaceTokenCountEstimator())
                     .splitAll(documents);

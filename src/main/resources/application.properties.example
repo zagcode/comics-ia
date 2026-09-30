@@ -7,7 +7,8 @@ quarkus.langchain4j.ollama.chat-model.temperature=0
 # com o raciocinio desligado o nemotron fica ~2x mais rapido, mas deixa de recusar assuntos fora de HQ e de chamar a ferramenta
 quarkus.langchain4j.ollama.chat-model.model-options.think=true
 quarkus.langchain4j.easy-rag.path=src/main/resources/rag
-# a ingestao fica com o RagIndexer: na subida e a cada comics.rag.reindex-every, junto com as fichas de comics.herois.path
+# a ingestao fica com o RagIndexer: na subida e a cada comics.rag.reindex-every
+# as fichas salvas em comics.herois.path entram no RAG pelo nome do personagem citado, nao por embedding
 quarkus.langchain4j.easy-rag.ingestion-strategy=off
 # trechos abaixo desse score nao entram no prompt (nomic-embed-text: relevantes >= 0.83, irrelevantes <= 0.79)
 quarkus.langchain4j.easy-rag.min-score=0.81
